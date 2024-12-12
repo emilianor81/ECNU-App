@@ -1,4 +1,4 @@
-import { Plus, Edit, Trash, X } from 'lucide-react';
+import { Plus, Edit, Trash, X, Home } from 'lucide-react';
 import { useState, useEffect } from 'react';
 // ... resto del código
 
@@ -104,7 +104,16 @@ const AdminVideos = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Administrar Videos</h2>
+        <div className="flex items-center gap-4">
+          <h2 className="text-2xl font-bold">Administrar Videos</h2>
+          <a
+            href="/"
+            className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+          >
+            <Home className="w-4 h-4" />
+            Volver al Inicio
+          </a>
+        </div>
         <button
           onClick={() => {
             setCurrentVideo(null);
