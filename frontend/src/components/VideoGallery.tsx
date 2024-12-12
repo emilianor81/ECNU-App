@@ -1,31 +1,29 @@
-import React from 'react';
 import { Play } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
-const videos = [
-  {
-    id: 1,
-    title: "Epic Mountain Descent in the Alps",
-    thumbnail: "https://images.unsplash.com/photo-1604762524889-3e2fcc145683?w=600&h=400&fit=crop",
-    views: "124K",
-    duration: "12:45"
-  },
-  {
-    id: 2,
-    title: "Beginner's Guide to Trail Riding",
-    thumbnail: "https://images.unsplash.com/photo-1622914607338-957fb9f10b57?w=600&h=400&fit=crop",
-    views: "89K",
-    duration: "15:20"
-  },
-  {
-    id: 3,
-    title: "Mountain Bike Maintenance Tips",
-    thumbnail: "https://images.unsplash.com/photo-1605164599901-db7f0dca2ccd?w=600&h=400&fit=crop",
-    views: "156K",
-    duration: "18:30"
-  }
-];
+interface Video {
+  id: number;
+  title: string;
+  thumbnail: string;
+  views: string;
+  duration: string;
+  youtubeUrl: string;
+}
 
 const VideoGallery = () => {
+  const [videos, setVideos] = useState<Video[]>([]);
+
+  useEffect(() => {
+    const savedVideos = localStorage.getItem('videos');
+    if (savedVideos) {
+      setVideos(JSON.parse(savedVideos));
+    }
+  }, []);
+
+  const handleVideoClick = (youtubeUrl: string) => {
+    window.open(youtubeUrl, '_blank');
+  };
+
   return (
     <section className="py-20 bg-gray-50" id="videos">
       <div className="container mx-auto px-4">
@@ -33,7 +31,11 @@ const VideoGallery = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {videos.map((video) => (
-            <div key={video.id} className="group relative rounded-xl overflow-hidden shadow-lg">
+            <div 
+              key={video.id} 
+              className="group relative rounded-xl overflow-hidden shadow-lg cursor-pointer"
+              onClick={() => handleVideoClick(video.youtubeUrl)}
+            >
               <div className="relative">
                 <img
                   src={video.thumbnail}
