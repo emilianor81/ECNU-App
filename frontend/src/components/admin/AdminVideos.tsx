@@ -36,7 +36,7 @@ const AdminVideos = () => {
 
   const fetchVideos = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/videos');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/videos`);
       const data = await response.json();
       setVideos(data);
     } catch (error) {
@@ -48,21 +48,19 @@ const AdminVideos = () => {
     e.preventDefault();
     try {
       if (currentVideo) {
-        // Actualizar video
-        await fetch(`http://localhost:3000/api/videos/${currentVideo._id}`, {
+        await fetch(`${import.meta.env.VITE_API_URL}/videos/${currentVideo._id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
         });
       } else {
-        // Crear nuevo video
-        await fetch('http://localhost:3000/api/videos', {
+        await fetch(`${import.meta.env.VITE_API_URL}/videos`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
         });
       }
-      fetchVideos(); // Recargar videos
+      fetchVideos();
       setIsEditing(false);
     } catch (error) {
       console.error('Error saving video:', error);
@@ -71,7 +69,7 @@ const AdminVideos = () => {
 
   const handleDelete = async (_id: string) => {
     try {
-      await fetch(`http://localhost:3000/api/videos/${_id}`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/videos/${_id}`, {
         method: 'DELETE'
       });
       fetchVideos();

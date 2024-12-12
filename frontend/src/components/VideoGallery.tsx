@@ -14,10 +14,17 @@ const VideoGallery = () => {
   const [videos, setVideos] = useState<Video[]>([]);
 
   useEffect(() => {
-    const savedVideos = localStorage.getItem('videos');
-    if (savedVideos) {
-      setVideos(JSON.parse(savedVideos));
-    }
+    const fetchVideos = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/videos`);
+        const data = await response.json();
+        setVideos(data);
+      } catch (error) {
+        console.error('Error fetching videos:', error);
+      }
+    };
+
+    fetchVideos();
   }, []);
 
   const handleVideoClick = (youtubeUrl: string) => {
