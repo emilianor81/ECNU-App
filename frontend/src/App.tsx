@@ -7,6 +7,7 @@ import Sponsors from './components/Sponsors';
 import Contact from './components/Contact';
 import AdminPanel from './components/admin/AdminPanel';
 import Footer from './components/Footer';
+import Login from './components/admin/Login';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
               </>
             } />
             <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/login" element={<Login />} />
           </Routes>
         </BrowserRouter>
       </main>
