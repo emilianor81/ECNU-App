@@ -12,10 +12,12 @@ export const getVideos = async (_req: Request, res: Response) => {
 
 export const createVideo = async (req: Request, res: Response) => {
   try {
+    console.log('Datos recibidos:', req.body);
     const video = new Video(req.body);
     await video.save();
     res.status(201).json(video);
   } catch (error) {
+    console.error('Error detallado:', error); 
     res.status(400).json({ message: 'Error al crear video' });
   }
 };
