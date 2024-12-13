@@ -8,6 +8,7 @@ import Contact from './components/Contact';
 import AdminPanel from './components/admin/AdminPanel';
 import Footer from './components/Footer';
 import Login from './components/admin/Login';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -25,7 +26,11 @@ function App() {
                 <Contact />
               </>
             } />
-            <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/admin" element={
+              <ProtectedRoute>
+                <AdminPanel />
+              </ProtectedRoute>
+            } />
             <Route path="/login" element={<Login />} />
           </Routes>
         </BrowserRouter>
