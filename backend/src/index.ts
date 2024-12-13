@@ -1,15 +1,18 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import routes from './routes';
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'https://ecnu-app.vercel.app'],
+  credentials: true
+}));
 app.use(express.json());
 
 // Usar el archivo de barril para las rutas
