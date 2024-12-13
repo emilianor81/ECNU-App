@@ -1,6 +1,5 @@
-import { Plus, Edit, Trash, X, Home } from 'lucide-react';
+import { Plus, Edit, Trash, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
-// ... resto del código
 
 interface Video {
   _id: string;
@@ -29,14 +28,14 @@ const AdminVideos = () => {
     youtubeUrl: ''
   });
 
-  // Cargar videos desde la API
-  useEffect(() => {
-    fetchVideos();
-  }, []);
-
   const fetchVideos = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/videos`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/videos`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       const data = await response.json();
       setVideos(data);
     } catch (error) {
@@ -44,39 +43,9 @@ const AdminVideos = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      if (currentVideo) {
-        await fetch(`${import.meta.env.VITE_API_URL}/videos/${currentVideo._id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData)
-        });
-      } else {
-        await fetch(`${import.meta.env.VITE_API_URL}/videos`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData)
-        });
-      }
-      fetchVideos();
-      setIsEditing(false);
-    } catch (error) {
-      console.error('Error saving video:', error);
-    }
-  };
-
-  const handleDelete = async (_id: string) => {
-    try {
-      await fetch(`${import.meta.env.VITE_API_URL}/videos/${_id}`, {
-        method: 'DELETE'
-      });
-      fetchVideos();
-    } catch (error) {
-      console.error('Error deleting video:', error);
-    }
-  };
+  useEffect(() => {
+    fetchVideos();
+  }, []);
 
   const handleEdit = (video: Video) => {
     setCurrentVideo(video);
@@ -88,6 +57,66 @@ const AdminVideos = () => {
       youtubeUrl: video.youtubeUrl
     });
     setIsEditing(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm('¿Estás seguro de eliminar este video?')) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/videos/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          await fetchVideos();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+
+    try {
+      const response = await fetch(
+        currentVideo 
+          ? `${import.meta.env.VITE_API_URL}/videos/${currentVideo._id}`
+          : `${import.meta.env.VITE_API_URL}/videos`,
+        {
+          method: currentVideo ? 'PUT' : 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(formData)
+        }
+      );
+
+      if (response.ok) {
+        await fetchVideos();
+        setIsEditing(false);
+        setCurrentVideo(null);
+        setFormData({
+          title: '',
+          thumbnail: '',
+          views: '',
+          duration: '',
+          youtubeUrl: ''
+        });
+      } else {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al guardar el video');
+    }
   };
 
   const handleYouTubeUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,19 +133,17 @@ const AdminVideos = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-4">
-          <h2 className="text-2xl font-bold">Administrar Videos</h2>
-          <a
-            href="/"
-            className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
-          >
-            <Home className="w-4 h-4" />
-            Volver al Inicio
-          </a>
-        </div>
+        <h2 className="text-2xl font-bold">Administrar Videos</h2>
         <button
           onClick={() => {
             setCurrentVideo(null);
+            setFormData({
+              title: '',
+              thumbnail: '',
+              views: '',
+              duration: '',
+              youtubeUrl: ''
+            });
             setIsEditing(true);
           }}
           className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700"
