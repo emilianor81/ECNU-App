@@ -2,7 +2,7 @@ import { Play } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface Video {
-  id: number;
+  id: string;
   title: string;
   thumbnail: string;
   views: string;
@@ -20,7 +20,7 @@ const VideoGallery = () => {
         const data = await response.json();
         setVideos(data);
       } catch (error) {
-        console.error('Error fetching videos:', error);
+        console.error('Error:', error);
       }
     };
 
