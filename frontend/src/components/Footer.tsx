@@ -1,6 +1,14 @@
 import { Shield } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const Footer = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsAuthenticated(!!token);
+  }, []);
+
   return (
     <footer className="bg-gray-900 text-white py-8">
       <div className="container mx-auto px-4">
@@ -22,7 +30,7 @@ const Footer = () => {
           
           <div className="mt-4 md:mt-0">
             <a
-              href="/admin"
+              href={isAuthenticated ? "/admin" : "/login"}
               className="text-gray-400 hover:text-gray-300 flex items-center gap-2 text-sm transition-colors"
             >
               <Shield className="w-4 h-4" />
